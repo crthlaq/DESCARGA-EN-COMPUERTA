@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Descarga en Compuerta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background-color: rgba(224, 242, 254, 0.75);
+            display: flex;
+            justify-content: center;
+            align-items: start;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: start;
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .side-images {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 300px;
+        }
+        .side-image {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .side-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/placeholder.svg?height=1080&width=1920');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: -1;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 600px;
+            flex-shrink: 0;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="number"], input[type="radio"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #9ca3af;
+        }
+        .ensayo {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .resultados {
+            margin-top: 20px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .resultado-ensayo {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        @media (max-width: 1200px) {
+            .side-images {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-image"></div>
+    <div class="container">
+        <!-- Imágenes del lado izquierdo -->
+        <div class="side-images">
+            <div class="side-image">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-lENrOYa2LSZbGzH8cL8rSqUm2ZQDhE.png" alt="Estudiantes en laboratorio">
+            </div>
+            <div class="side-image">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-PlEswaS5wE3hV62GlfxMpNJK56gxuY.png" alt="Tomando mediciones">
+            </div>
+            <div class="side-image">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-LZSGSTpwet4ao5OE0MBTcGQrRmL0Hl.png" alt="Ajuste de equipo de laboratorio">
+            </div>
+        </div>
+
+        <!-- Formulario central -->
+        <div class="card">
+            <h1>Cálculo de Descarga en Compuerta</h1>
+            <p>Ingrese los datos para calcular la descarga.</p>
+            <form id="calculoForm">
+                <div class="form-group">
+                    <label>Tipo de Descarga:</label>
+                    <label>
+                        <input type="radio" name="tipoDescarga" value="libre" checked> Libre
+                    </label>
+                    <label>
+                        <input type="radio" name="tipoDescarga" value="sumergida"> Sumergida
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="numEnsayos">Número de ensayos:</label>
+                    <input type="number" id="numEnsayos" min="1" value="1" required>
+                </div>
+                <div id="ensayos"></div>
+                <button type="submit" id="calcularBtn">Calcular</button>
+            </form>
+            <div id="resultados" class="resultados"></div>
+        </div>
+
+        <!-- Imágenes del lado derecho -->
+        <div class="side-images">
+            <div class="side-image">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-VHWG8kCTS2ndnXqvt9Yr5a7lRvhCno.png" alt="Trabajo en computadora">
+            </div>
+            <div class="side-image">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-nsCpUnvDXi9FrcTGXXwVBf0fHiVxDm.png" alt="Observación de equipo">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // El código JavaScript permanece igual que en la versión anterior
+        const form = document.getElementById('calculoForm');
+        const numEnsayosInput = document.getElementById('numEnsayos');
+        const ensayosContainer = document.getElementById('ensayos');
+        const resultadosContainer = document.getElementById('resultados');
+        const calcularBtn = document.getElementById('calcularBtn');
+
+        function crearEnsayos() {
+            const numEnsayos = parseInt(numEnsayosInput.value);
+            ensayosContainer.innerHTML = '';
+            for (let i = 0; i < numEnsayos; i++) {
+                const ensayo = document.createElement('div');
+                ensayo.className = 'ensayo';
+                ensayo.innerHTML = `
+                    <h3>Ensayo ${i + 1}</h3>
+                    <div class="form-group">
+                        <label for="a-${i}">Altura de la abertura de compuerta (a) en m:</label>
+                        <input type="number" id="a-${i}" step="0.001" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="h0-${i}">Nivel aguas arriba (h₀) en m:</label>
+                        <input type="number" id="h0-${i}" step="0.001" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mu-${i}">Coeficiente de descarga (μ):</label>
+                        <input type="number" id="mu-${i}" step="0.001" required>
+                    </div>
+                    ${form.tipoDescarga.value === 'sumergida' ? `
+                        <div class="form-group">
+                            <label for="h2-${i}">Nivel de salida (h₂) en m:</label>
+                            <input type="number" id="h2-${i}" step="0.001" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="k-${i}">Coeficiente de remanso (k):</label>
+                            <input type="number" id="k-${i}" step="0.001" required>
+                        </div>
+                    ` : ''}
+                `;
+                ensayosContainer.appendChild(ensayo);
+            }
+        }
+
+        function calcularDescarga(event) {
+            event.preventDefault();
+            calcularBtn.disabled = true;
+            calcularBtn.textContent = 'Calculando...';
+
+            const tipoDescarga = form.tipoDescarga.value;
+            const numEnsayos = parseInt(numEnsayosInput.value);
+            const ensayos = [];
+
+            for (let i = 0; i < numEnsayos; i++) {
+                const ensayo = {
+                    a: parseFloat(document.getElementById(`a-${i}`).value),
+                    h0: parseFloat(document.getElementById(`h0-${i}`).value),
+                    mu: parseFloat(document.getElementById(`mu-${i}`).value)
+                };
+                if (tipoDescarga === 'sumergida') {
+                    ensayo.h2 = parseFloat(document.getElementById(`h2-${i}`).value);
+                    ensayo.k = parseFloat(document.getElementById(`k-${i}`).value);
+                }
+                ensayos.push(ensayo);
+            }
+
+            setTimeout(() => {
+                const resultados = ensayos.map((ensayo, index) => {
+                    const relacion_h0_a = ensayo.h0 / ensayo.a;
+                    let Q;
+                    if (tipoDescarga === 'libre') {
+                        Q = ensayo.mu * ensayo.a * 0.6 * 3600 * Math.sqrt(2 * 9.81 * ensayo.h0);
+                        return {
+                            ensayo: index + 1,
+                            resultados: [
+                                `1. Relación h₀/a para la descarga libre: ${relacion_h0_a.toFixed(3)}`,
+                                `2. Caudal para la descarga libre (Q): ${Q.toFixed(3)} m³/h`
+                            ]
+                        };
+                    } else {
+                        const relacion_h2_a = ensayo.h2 / ensayo.a;
+                        Q = ensayo.k * ensayo.mu * ensayo.a * 0.6 * 3600 * Math.sqrt(2 * 9.81 * ensayo.h0);
+                        return {
+                            ensayo: index + 1,
+                            resultados: [
+                                `1. Relación h₀/a para la descarga sumergida: ${relacion_h0_a.toFixed(3)}`,
+                                `2. Relación h₂/a para la descarga sumergida: ${relacion_h2_a.toFixed(3)}`,
+                                `3. Caudal para la descarga sumergida (Q): ${Q.toFixed(3)} m³/h`
+                            ]
+                        };
+                    }
+                });
+
+                mostrarResultados(resultados);
+                calcularBtn.disabled = false;
+                calcularBtn.textContent = 'Calcular';
+            }, 1000);
+        }
+
+        function mostrarResultados(resultados) {
+            resultadosContainer.innerHTML = '<h3>Resultados:</h3>';
+            resultados.forEach(resultado => {
+                const resultadoEnsayo = document.createElement('div');
+                resultadoEnsayo.className = 'resultado-ensayo';
+                resultadoEnsayo.innerHTML = `
+                    <strong>RESULTADOS ENSAYO ${resultado.ensayo}:</strong><br>
+                    ${resultado.resultados.join('<br>')}
+                `;
+                resultadosContainer.appendChild(resultadoEnsayo);
+            });
+        }
+
+        numEnsayosInput.addEventListener('change', crearEnsayos);
+        form.tipoDescarga.forEach(radio => radio.addEventListener('change', crearEnsayos));
+        form.addEventListener('submit', calcularDescarga);
+
+        // Inicializar los ensayos
+        crearEnsayos();
+    </script>
+</body>
+</html>
+
